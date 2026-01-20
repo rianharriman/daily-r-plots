@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04   # ← pin to avoid Ubuntu 24.04 issues
 
     steps:
       - name: Checkout repo
@@ -24,7 +24,12 @@ jobs:
           r-version: '4.3.2'
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+            libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -36,6 +41,7 @@ jobs:
             TTR
             lubridate
             dplyr
+          dependencies: '"hard"'   # ← required now
 
       - name: Run R script
         run: Rscript plot_script.R
